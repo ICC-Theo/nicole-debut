@@ -1,58 +1,47 @@
-# Google Sheets Integration Setup Guide
+# Google Sheet for Nicole's Debut
 
-Your website is already configured to read guest IDs from your public Google Sheet!
+Guest IDs work **today** without any sheet: the site reads them from `public/Event Invitation.csv`
+(80 IDs). The sheet only adds two things: editing the guest list without a code push, and collecting
+RSVP answers in one place. Use a **new** sheet for Nicole — never Enchong's.
 
-**Your Sheet:** https://docs.google.com/spreadsheets/d/1cJLcTNayGgeI_rfKCTMHvBsLbVRZcmV2dzF57CtJzVI
+## 1. Create the sheet (2 min)
 
-## Current Status
+1. Go to <https://sheets.new>. Name it **Nicole Debut RSVP**.
+2. **File → Import → Upload** → choose `public/Event Invitation.csv` from this repo.
+3. Import location: **Replace current sheet**. Separator: **Comma**. Click **Import data**.
+4. Fill in guest names in column **A**. Keep the Guest IDs in column **D**, on the **first tab**.
+5. **Share** → General access: **Anyone with the link** → **Viewer**.
 
-✅ **Reading Guest IDs** - Working! (Sheet is public)  
-⏳ **Saving RSVP Responses** - Needs Apps Script setup (see below)
+Layout the site expects:
 
----
+| A | B | C | D |
+|---|---|---|---|
+| Name | Seats | Kids Seat | Guest ID |
 
-## Setup RSVP Saving to Google Sheets
+## 2. Collect RSVP answers (5 min)
 
-To save RSVP responses directly to your spreadsheet, follow these steps:
-
-### Step 1: Open Google Apps Script
-
-1. Open your Google Sheet
-2. Go to **Extensions** → **Apps Script**
-3. This opens the script editor
-
-### Step 2: Add the Script Code
-
-1. Delete any existing code in the editor
-2. Copy and paste this code:
+1. In the sheet: **Extensions → Apps Script**. Delete the sample code and paste:
 
 ```javascript
 function doPost(e) {
   try {
     const data = JSON.parse(e.postData.contents);
-    
     const ss = SpreadsheetApp.getActiveSpreadsheet();
-    
-    // Get or create RSVP Response sheet
+
     let sheet = ss.getSheetByName('RSVP Response');
     if (!sheet) {
       sheet = ss.insertSheet('RSVP Response');
       sheet.appendRow(['GuestID', 'Guest Name', 'Attendee Names', 'Adults', 'Kids', 'Attending', 'Timestamp']);
-      // Format header row
       sheet.getRange(1, 1, 1, 7).setFontWeight('bold');
     }
-    
-    // Check if guest already responded (update instead of duplicate)
+
+    // One row per guest: a changed answer overwrites the earlier one
     const values = sheet.getDataRange().getValues();
     let rowIndex = -1;
-    
     for (let i = 1; i < values.length; i++) {
-      if (values[i][0] === data.guestId) {
-        rowIndex = i + 1;
-        break;
-      }
+      if (values[i][0] === data.guestId) { rowIndex = i + 1; break; }
     }
-    
+
     const rowData = [
       data.guestId,
       data.guestName || '',
@@ -62,115 +51,52 @@ function doPost(e) {
       data.attending || 'Yes',
       data.timestamp || new Date().toLocaleString()
     ];
-    
+
     if (rowIndex > 0) {
-      // Update existing row
       sheet.getRange(rowIndex, 1, 1, 7).setValues([rowData]);
     } else {
-      // Add new row
       sheet.appendRow(rowData);
     }
-    
-    return ContentService.createTextOutput(JSON.stringify({
-      status: 'success'
-    })).setMimeType(ContentService.MimeType.JSON);
-    
+
+    return ContentService.createTextOutput(JSON.stringify({ status: 'success' }))
+      .setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
-    return ContentService.createTextOutput(JSON.stringify({
-      status: 'error',
-      error: error.toString()
-    })).setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(JSON.stringify({ status: 'error', error: error.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
   }
 }
 
-function doGet(e) {
-  return ContentService.createTextOutput(JSON.stringify({
-    status: 'ok',
-    message: 'RSVP API is running'
-  })).setMimeType(ContentService.MimeType.JSON);
+function doGet() {
+  return ContentService.createTextOutput(JSON.stringify({ status: 'ok', message: 'Nicole RSVP API is running' }))
+    .setMimeType(ContentService.MimeType.JSON);
 }
 ```
 
-3. Click **Save** (Ctrl+S or Cmd+S)
-4. Name the project: **"Birthday RSVP"**
+2. **Save** (Ctrl+S), name the project **Nicole RSVP**.
+3. **Deploy → New deployment** → gear icon → **Web app**:
+   - Execute as: **Me**
+   - Who has access: **Anyone**
+4. **Deploy** → **Authorize access** → pick your account → **Advanced** → **Go to Nicole RSVP (unsafe)** → **Allow**.
+5. Copy the **Web app URL** (ends in `/exec`).
 
-### Step 3: Deploy as Web App
+## 3. Connect the site
 
-1. Click **Deploy** → **New deployment**
-2. Click the gear icon ⚙️ next to "Select type"
-3. Select **Web app**
-4. Configure:
-   - **Description:** RSVP Handler
-   - **Execute as:** Me
-   - **Who has access:** Anyone
-5. Click **Deploy**
-6. Click **Authorize access**
-7. Sign in with your Google account
-8. Click **Advanced** → **Go to Birthday RSVP (unsafe)**
-9. Click **Allow**
-10. **Copy the Web app URL** (it looks like: `https://script.google.com/macros/s/AKfycb.../exec`)
+In `src/services/guestService.ts`, set:
 
-### Step 4: Add the URL to Your Website
-
-1. Create a file named `.env` in your project root folder
-2. Add this line (replace with YOUR copied URL):
-
-```
-REACT_APP_RSVP_ENDPOINT=https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec
+```typescript
+spreadsheetId: '<the long ID between /d/ and /edit in the sheet URL>',
+rsvpEndpoint: '<the /exec Web app URL>',
+useGoogleSheets: true,
 ```
 
-3. Restart the development server (`npm start`)
-
-### Step 5: For Production (GitHub Pages)
-
-Since GitHub Pages can't read `.env` files, update the endpoint directly in the code:
-
-1. Open `src/services/guestService.ts`
-2. Find this line:
-   ```typescript
-   rsvpEndpoint: process.env.REACT_APP_RSVP_ENDPOINT || '',
-   ```
-3. Replace it with your actual URL:
-   ```typescript
-   rsvpEndpoint: 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec',
-   ```
-
----
-
-## Testing
-
-1. Run your website locally: `npm start`
-2. Enter a valid Guest ID (e.g., QWDAT)
-3. Fill out the RSVP form and submit
-4. Check your Google Sheet - a new **"RSVP Response"** tab should appear with the data!
-
----
-
-## Sheet Structure
-
-### Sheet 1 (Your Guest List) - Columns:
-| A | B | C | D | E |
-|---|---|---|---|---|
-| Main Guest | Adult | Kids | GuestID | Table No. |
-
-### Sheet 2 "RSVP Response" (Auto-created) - Columns:
-| A | B | C | D | E | F | G |
-|---|---|---|---|---|---|---|
-| GuestID | Guest Name | Attendee Names | Adults | Kids | Attending | Timestamp |
-
----
+Commit and push; GitHub Actions redeploys in about 2 minutes.
+If the sheet can't be reached, the site falls back to `public/Event Invitation.csv`,
+so keep the two lists in sync when you add guests.
 
 ## Troubleshooting
 
-**RSVP not saving?**
-- Check browser console (F12) for errors
-- Verify the Apps Script URL is correct
-- Check Apps Script logs: Extensions → Apps Script → View → Executions
-
-**Guest ID not validating?**
-- Make sure your sheet is shared publicly (Anyone with link = Viewer)
-- Check the GuestID column (Column D) has valid IDs
-
-**Changes not showing on deployed site?**
-- Rebuild and redeploy: commit changes and push to GitHub
-- Clear browser cache or try incognito mode
+- **"Invalid Guest ID"**: the ID must be in column D of the first tab, and the sheet must be shared
+  as *Anyone with the link → Viewer*.
+- **RSVPs not appearing**: Apps Script → **Executions** shows errors. If you edit the script,
+  use **Deploy → Manage deployments → Edit → New version**, or the old code keeps running.
+- **Old page after a push**: Ctrl+F5, or a private window.

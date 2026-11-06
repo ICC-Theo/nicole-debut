@@ -5,12 +5,14 @@ import { EVENT, asset } from '../eventConfig';
 const CONFIG = {
   // Nicole's own Google Sheet ID (from the URL). Empty = use public/Event Invitation.csv.
   // Never reuse another event's sheet: RSVPs would land in that event's list.
-  spreadsheetId: '',
+  spreadsheetId: '1OY_z0B62aiXQCPskeBumoo1il0L8Xf2c0zMNe3fGEpI',
+  // Tab holding the guest list (the gid= in the sheet URL)
+  sheetGid: '0',
 
   // Google Apps Script Web App URL for saving RSVP responses (see GOOGLE_SHEETS_SETUP.md)
   rsvpEndpoint: '',
 
-  useGoogleSheets: false,
+  useGoogleSheets: true,
 };
 
 const rsvpKey = (guestId: string) => `${EVENT.storageKey}_rsvp_${guestId}`;
@@ -44,7 +46,7 @@ let guestDataCache: GuestData[] | null = null;
 const loadGuestDataFromGoogleSheets = async (): Promise<GuestData[]> => {
   try {
     // Use the public CSV export URL (works for public sheets without API key)
-    const url = `https://docs.google.com/spreadsheets/d/${CONFIG.spreadsheetId}/export?format=csv&gid=0`;
+    const url = `https://docs.google.com/spreadsheets/d/${CONFIG.spreadsheetId}/export?format=csv&gid=${CONFIG.sheetGid}`;
     
     const response = await fetch(url);
     
@@ -149,28 +151,26 @@ export const loadGuestData = async (): Promise<GuestData[]> => {
     return guestDataCache;
   }
 
-  try {
-    let data: GuestData[];
-    
-    if (CONFIG.useGoogleSheets && CONFIG.spreadsheetId) {
+  let data: GuestData[] = [];
+
+  if (CONFIG.useGoogleSheets && CONFIG.spreadsheetId) {
+    try {
       data = await loadGuestDataFromGoogleSheets();
-    } else {
-      data = await loadGuestDataFromCSV();
+    } catch (error) {
+      // Unshared/unreachable sheet: use the bundled CSV instead
+      console.error('Error loading guest data from Google Sheets, falling back to CSV:', error);
     }
-    
-    guestDataCache = data;
-    guestIdsCache = data.map(g => g.guestId.toUpperCase());
-    
-    return data;
-  } catch (error) {
-    console.error('Error loading guest data:', error);
-    // Fallback to CSV if Google Sheets fails
-    if (CONFIG.useGoogleSheets) {
-      console.log('Falling back to CSV...');
-      return loadGuestDataFromCSV();
-    }
-    return [];
   }
+
+  if (data.length === 0) {
+    data = await loadGuestDataFromCSV();
+  }
+
+  // The fallback path must fill the caches too, or validateGuestId rejects every ID.
+  guestDataCache = data;
+  guestIdsCache = data.map(g => g.guestId.toUpperCase().trim());
+
+  return data;
 };
 
 /**

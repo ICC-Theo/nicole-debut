@@ -27,7 +27,7 @@ Fonts: Cormorant Garamond (headings), Pinyon Script (script accents), Poppins (b
 
 ## Guest list and RSVPs
 
-- Guest IDs are read from `public/Event Invitation.csv` (column 4, five letters). The test ID is `NICOL`.
+- Guest IDs are read from `public/Event Invitation.csv` (column 4, five letters): 80 consonant-only IDs, none shared with Enchong's list.
 - To use Google Sheets instead, create a **new** sheet and Apps Script for Nicole
   (see [GOOGLE_SHEETS_SETUP.md](GOOGLE_SHEETS_SETUP.md)), then fill in `spreadsheetId`, `rsvpEndpoint`
   and set `useGoogleSheets: true` in `src/services/guestService.ts`.
@@ -45,7 +45,7 @@ public domain via Wikimedia Commons. Stored at `src/assets/monet-garden.jpg` (11
 
 ```bash
 npm install
-npm start          # http://localhost:3000/?GuestID=NICOL
+npm start          # http://localhost:3000/?GuestID=FGJQZ
 npm run build
 ```
 
