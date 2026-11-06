@@ -10,7 +10,7 @@ const CONFIG = {
   sheetGid: '0',
 
   // Google Apps Script Web App URL for saving RSVP responses (see GOOGLE_SHEETS_SETUP.md)
-  rsvpEndpoint: '',
+  rsvpEndpoint: 'https://script.google.com/macros/s/AKfycbx6H7YJp1tudRFor03FXDX_PQPXlmCcbiP3dIJytdbuJ_vJD7KzhsKgO0x1dJS2tD0q/exec',
 
   useGoogleSheets: true,
 };
