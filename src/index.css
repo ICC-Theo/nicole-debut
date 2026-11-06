@@ -161,11 +161,17 @@ button, input, select { font-family: inherit; }
 .header h1 {
   font-family: 'Cormorant Garamond', serif;
   font-size: 3rem;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.1;
   letter-spacing: 0.3rem;
   color: var(--sage-dark);
   margin: 0.25rem 0 0.2rem;
+  /* white halo: the name sits over the gown, where dark sage alone disappears */
+  text-shadow:
+    0 0 2px #fff,
+    0 0 10px rgba(255, 255, 255, 0.95),
+    0 0 24px rgba(255, 251, 247, 0.9),
+    0 2px 4px rgba(74, 89, 43, 0.25);
 }
 
 .header-subtitle {
@@ -554,8 +560,21 @@ button, input, select { font-family: inherit; }
 }
 
 .schedule-time { grid-area: time; font-size: 0.85rem; font-weight: 600; color: var(--rose); }
-.schedule-title { grid-area: title; font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; color: var(--sage-dark); line-height: 1.2; }
-.schedule-description { grid-area: desc; font-size: 0.85rem; color: var(--text-medium); line-height: 1.5; }
+.schedule-title {
+  grid-area: title;
+  justify-self: start;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--sage-dark);
+  line-height: 1.2;
+  margin-bottom: 0.2rem;
+  text-shadow: 0 0 2px #fff, 0 0 8px rgba(255, 255, 255, 0.9);
+  /* baby-pink highlighter stroke under the lower half of the title */
+  background: linear-gradient(transparent 58%, rgba(235, 173, 189, 0.6) 58%, rgba(235, 173, 189, 0.6) 92%, transparent 92%);
+  padding: 0 0.15rem;
+}
+.schedule-description { grid-area: desc; font-size: 0.85rem; font-weight: 500; color: var(--text-dark, #3a3a2e); line-height: 1.5; }
 
 /* Countdown */
 .countdown-container {

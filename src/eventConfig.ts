@@ -2,7 +2,7 @@
 // Leave `dateTime` empty until confirmed: dates show "To be announced" and the countdown hides.
 
 export const EVENT = {
-  celebrant: 'Nicole',
+  celebrant: 'Angeline Nicole',
   age: 18,
   occasionTitle: 'Debut',
   tagline: 'Eighteen, in Full Bloom',
