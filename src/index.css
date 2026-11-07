@@ -574,6 +574,22 @@ button, input, select { font-family: inherit; }
   background: linear-gradient(transparent 58%, rgba(235, 173, 189, 0.6) 58%, rgba(235, 173, 189, 0.6) 92%, transparent 92%);
   padding: 0 0.15rem;
 }
+.outfit-photos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  margin: 0.4rem 0 1rem;
+}
+.outfit-photos img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  object-position: top;
+  border-radius: 14px;
+  border: 3px solid #fff;
+  box-shadow: 0 4px 14px rgba(74, 89, 43, 0.18);
+}
+
 .schedule-description { grid-area: desc; font-size: 0.85rem; font-weight: 500; color: var(--text-dark, #3a3a2e); line-height: 1.5; }
 
 /* Countdown */

@@ -1,5 +1,13 @@
 import React from 'react';
-import { DRESS_CODE_SWATCHES } from '../eventConfig';
+import { DRESS_CODE_SWATCHES, asset } from '../eventConfig';
+
+const OutfitPhotos: React.FC<{ files: string[]; label: string }> = ({ files, label }) => (
+  <div className="outfit-photos">
+    {files.map((f, i) => (
+      <img key={f} src={asset(`DressCode/${f}`)} alt={`${label} ${i + 1}`} loading="lazy" />
+    ))}
+  </div>
+);
 
 const DressCode: React.FC = () => {
   return (
@@ -37,6 +45,7 @@ const DressCode: React.FC = () => {
             <div className="dress-code-card suggestion-card">
               <div className="suggestion-icon">👗</div>
               <h3 className="suggestion-title">For Ladies</h3>
+              <OutfitPhotos files={['Female1.jpg', 'Female2.jpg']} label="Ladies' outfit idea" />
               <ul className="suggestion-list">
                 <li>Flowy pastel dress or gown</li>
                 <li>Soft floral prints in lavender, blue, mint, or yellow</li>
@@ -49,6 +58,7 @@ const DressCode: React.FC = () => {
             <div className="dress-code-card suggestion-card">
               <div className="suggestion-icon">👔</div>
               <h3 className="suggestion-title">For Gentlemen</h3>
+              <OutfitPhotos files={['Male1.jpg', 'Male2.jpg']} label="Gentlemen's outfit idea" />
               <ul className="suggestion-list">
                 <li>Pastel polo, barong, or dress shirt</li>
                 <li>Light blue, sage, lavender, or cream tones</li>

@@ -29,6 +29,8 @@ export const PROGRAM = [
   { icon: '🌹', time: '', title: '18 Roses & 18 Candles', description: 'Dances and heartfelt wishes from her loved ones' },
   { icon: '🍽️', time: '', title: 'Dinner', description: 'A garden feast shared with family and friends' },
   { icon: '🎁', time: '', title: '18 Treasures', description: 'Keepsakes and blessings for the years ahead' },
+  { icon: '💵', time: '', title: '18 Bills', description: 'Eighteen gifts of good fortune for her next chapter' },
+  { icon: '💍', time: '', title: '18 Accessories', description: 'Eighteen little sparkles to complete her look' },
   { icon: '💃', time: '', title: 'Party & Dancing', description: 'Dance the afternoon into the evening with Nicole' },
 ];
 
