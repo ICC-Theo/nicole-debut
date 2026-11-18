@@ -8,7 +8,7 @@ Duplicated from the Enchong 50th birthday site (`icc-theo.github.io`) and re-the
 All details live in [`src/eventConfig.ts`](src/eventConfig.ts). Edit that one file to change them.
 
 - **Celebrant**: Nicole
-- **Date / Time**: Saturday, December 19, 2026, 2:30 PM – 7:00 PM (`dateTime` / `endTime` in `eventConfig.ts`)
+- **Date / Time**: Saturday, December 19, 2026, 3:30 PM – 8:00 PM (`dateTime` / `endTime` in `eventConfig.ts`)
 - **Venue**: AHF 77 Westside Private Resort, Sitio Lagundi, Banaba West, Batangas City
 - **Theme**: Floral Paintings (Impressionist plein air: Monet, Griffel, Averin)
 - **Dress code**: Pastel colors except pink

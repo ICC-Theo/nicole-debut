@@ -8,8 +8,8 @@ export const EVENT = {
   tagline: 'Eighteen, in Full Bloom',
 
   // ISO local time, e.g. '2027-01-23T17:00:00'
-  dateTime: '2026-12-19T14:30:00',
-  endTime: '7:00 PM',
+  dateTime: '2026-12-19T15:30:00',
+  endTime: '8:00 PM',
 
   venueName: 'AHF 77 Westside Private Resort',
   venueAddress: 'Sitio Lagundi, Banaba West, Batangas City',
